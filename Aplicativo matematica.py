@@ -1,5 +1,6 @@
 #Criando um aplicativo de matemática fácil e intuitivo
 
+
 def mostrar_menu():
     print('====MENU====')
     print('1. Dobro, Triplo, Raiz Quadrada')
@@ -41,16 +42,26 @@ def tabuada():
     print(N3,'X 8 =',V8)
     print(N3,'X 9 =',V9)
     print(N3,'X 10 =',V10)
-
-# Exemplo de uso das funções 
-mostrar_menu()
-escolha = int(input("Escolha uma opção (1-3) :"))
-if escolha == 1:
-    dobro_triplo_raiz()
-if escolha == 2:
-    tabuada()
-elif escolha == 3:
-    print('Saindo...')
-else:
-    print('Escolha inválida, tentee novamente. ')
     
+def main():
+    while True:  #vou iniciar um loop 
+        mostrar_menu() # vai exibir o menu 
+        
+        try:
+            escolha = int(input('Escolha uma opção de (1-3): '))
+        except ValueError:
+            print('Entrada inválida. Por favor, insira um número.')
+            continue
+        
+        if escolha == 1:
+            dobro_triplo_raiz()
+        elif escolha == 2:
+            tabuada()
+        elif escolha == 3:
+            print('Saindo...')
+            break
+        else:
+            print('Escolha inválida, tente novamente.')
+            
+if __name__ == "__main__":
+    main()
