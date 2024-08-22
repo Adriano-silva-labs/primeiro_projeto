@@ -5,7 +5,33 @@ def mostrar_menu():
     print('====MENU====')
     print('1. Dobro, Triplo, Raiz Quadrada')
     print('2. Tabuada')
-    print('3. Sair ')
+    print('3. Jogos')
+    print('4. Sair ')
+    
+    #Segundo menu da aplicação
+    
+def mostrar_submenu_jogos():
+    while True:
+        print('====MENU DE JOGOS====')
+        print('1. Questões')
+        print('2. Raciocínio Rápido')
+        print('3. Voltar ao menu principal')
+        print('========================')
+        
+        opcao = input('ESCOLHA UMA OPÇÃO:')
+        
+        if opcao == '1':
+            print('iniciando Questões...')
+        elif opcao == '2':
+            print('Iniciando Raciocínio Rápido...')
+        elif opcao == '3':
+            print('Voltando ao menu principal...')
+            break
+        else:
+            print('Opção inválida. Tente novamente.')
+            
+    pass
+    
     print('=================')
     
 def dobro_triplo_raiz():
@@ -48,7 +74,7 @@ def main():
         mostrar_menu() # vai exibir o menu 
         
         try:
-            escolha = int(input('Escolha uma opção de (1-3): '))
+            escolha = int(input('Escolha uma opção de (1-4): '))
         except ValueError:
             print('Entrada inválida. Por favor, insira um número.')
             continue
@@ -58,6 +84,8 @@ def main():
         elif escolha == 2:
             tabuada()
         elif escolha == 3:
+            mostrar_submenu_jogos()
+        elif escolha == 4:
             print('Saindo...')
             break
         else:
