@@ -3,7 +3,7 @@
 
 def mostrar_menu():
     print('====MENU====')
-    print('1. Dobro, Triplo, Raiz Quadrada')
+    print('1. calculadora')
     print('2. Tabuada')
     print('3. Jogos')
     print('4. Sair ')
@@ -21,7 +21,7 @@ def mostrar_submenu_jogos():
         opcao = input('ESCOLHA UMA OPÇÃO:')
         
         if opcao == '1':
-            print('iniciando Questões...')
+            print('Iniciando questionario')
         elif opcao == '2':
             print('Iniciando Raciocínio Rápido...')
         elif opcao == '3':
@@ -29,20 +29,50 @@ def mostrar_submenu_jogos():
             break
         else:
             print('Opção inválida. Tente novamente.')
-            
-    pass
     
     print('=================')
     
-def dobro_triplo_raiz():
-    n2 = int(input('DIGITE UM NÚMERO, VAMOS DESCOBRIR O DOBRO TRIPLO E RAIZ QUADRADA'))
-    dobro = n2*2
-    triplo = n2*3
-    raiz_quadrada = n2**0.5
+def calculadora():
+    while True:
+        print("Escolha uma operação:")
+        print("1. Adição (+)")
+        print("2. Subtração (-)")
+        print("3. Multiplicação (*)")
+        print("4. Divisão (/)")
 
-    print ('RESULTADO')
-    print('DOBRO: {}\nTRIPLO: {}\nRAIZ QUADRADA: {}'.format(dobro, triplo, raiz_quadrada))
-    
+        operacao = input("Digite a operação desejada (+, -, *, /): ")
+
+        if operacao in ('+', '-', '*', '/'):
+            try:
+                num1 = float(input("Digite o primeiro número: "))
+                num2 = float(input("Digite o segundo número: "))
+
+                if operacao == '+':
+                    resultado = num1 + num2
+                elif operacao == '-':
+                    resultado = num1 - num2
+                elif operacao == '*':
+                    resultado = num1 * num2
+                elif operacao == '/':
+                    if num2 != 0:
+                        resultado = num1 / num2
+                    else:
+                        print("Erro: Divisão por zero não é permitida.")
+                        continue  # Volta ao início do loop para tentar novamente
+
+                print(f"O resultado é: {resultado}")
+
+            except ValueError:
+                print("Erro: Entrada inválida. Por favor, insira números válidos.")
+        
+        else:
+            print("Erro: Operação inválida.")
+
+        # Pergunta ao usuário se deseja continuar
+        continuar = input('Deseja realizar outra operação? (s/n): ').strip().lower()
+        if continuar != 's':
+            print('Voltando ao menu principal...')
+            break
 
 def tabuada():
     N3 = int(input('DIGITE UM Nº PARA TER A SUA TABUADA: '))
@@ -80,7 +110,7 @@ def main():
             continue
         
         if escolha == 1:
-            dobro_triplo_raiz()
+            calculadora()
         elif escolha == 2:
             tabuada()
         elif escolha == 3:
