@@ -1,5 +1,8 @@
 #Criando um aplicativo de matemática fácil e intuitivo
 
+import time
+import random
+import threading
 
 def mostrar_menu():
     print('====MENU====')
@@ -23,7 +26,8 @@ def mostrar_submenu_jogos():
         if opcao == '1':
             Questões() # Chama a função Questões
         elif opcao == '2':
-            print('Iniciando Raciocínio Rápido...')
+            raciocinio_rapido()
+            
         elif opcao == '3':
             print('Voltando ao menu principal...')
             break
@@ -89,48 +93,160 @@ def Questões():
             if continuar != 's':
                 print('Voltando ao menu principal...')
                 break
+            
 
-def calculadora():
-    while True:
-        print("Escolha uma operação:")
-        print("1. Adição (+)")
-        print("2. Subtração (-)")
-        print("3. Multiplicação (*)")
-        print("4. Divisão (/)")
-
-        operacao = input("Digite a operação desejada (+, -, *, /): ")
-
-        if operacao in ('+', '-', '*', '/'):
-            try:
-                num1 = float(input("Digite o primeiro número: "))
-                num2 = float(input("Digite o segundo número: "))
-
-                if operacao == '+':
-                    resultado = num1 + num2
-                elif operacao == '-':
-                    resultado = num1 - num2
-                elif operacao == '*':
-                    resultado = num1 * num2
-                elif operacao == '/':
-                    if num2 != 0:
-                        resultado = num1 / num2
-                    else:
-                        print("Erro: Divisão por zero não é permitida.")
-                        continue  # Volta ao início do loop para tentar novamente
-
-                print(f"O resultado é: {resultado}")
-
-            except ValueError:
-                print("Erro: Entrada inválida. Por favor, insira números válidos.")
+def raciocinio_rapido():
+    def generate_expression(level):
+        operators = ['+', '-', '*', '/']
+        num_terms = level // 2 + 2
         
-        else:
-            print("Erro: Operação inválida.")
+        expression = str(random.randint(1, 10))  # Inicia com um número
+        
+        for _ in range(1, num_terms):
+            operator = random.choice(operators)
+            number = random.randint(1, 10)
+            
+            # Garante que a expressão não gere resultados negativos
+            if operator == '-' and int(expression.split()[-1]) < number:
+                operator = '+'
+            
+            expression += f" {operator} {number}"  # Adiciona operador seguido de número
+        
+        return expression
 
-        # Pergunta ao usuário se deseja continuar
-        continuar = input('Deseja realizar outra operação? (s/n): ').strip().lower()
+    def calculate_result(expression, left_to_right=True):
+        if left_to_right:
+            tokens = expression.split()
+            result = int(tokens[0])
+            i = 1
+            while i < len(tokens):
+                operator = tokens[i]
+                number = int(tokens[i + 1])
+                if operator == '+':
+                    result += number
+                elif operator == '-':
+                    result -= number
+                elif operator == '*':
+                    result *= number
+                elif operator == '/':
+                    if number == 0:
+                        return "undefined"
+                    result //= number
+                i += 2
+            return result
+        else:
+            try:
+                return eval(expression)  # Avalia a expressão com a ordem padrão das operações
+            except ZeroDivisionError:
+                return "undefined"
+            except (SyntaxError, NameError):
+                return None
+
+    def countdown(seconds, stop_event):
+        for i in range(seconds, 0, -1):
+            if stop_event.is_set():
+                break
+            print(f"\rTempo restante: {i} segundos", end="")
+            time.sleep(1)
+        if not stop_event.is_set():
+            print("\nTempo esgotado!")
+
+    def math_game():
+        level = 1
+        question_count = 0
+        time_limit = 50
+        
+        while True:
+            question_count += 1
+            
+            # Ajusta o limite de tempo com base no número de perguntas
+            if question_count % 10 == 1 and question_count != 1:
+                time_limit = max(10, 50 - ((question_count // 10 - 1) * 5))
+            
+            print(f"\nNível {level}")
+            expression = generate_expression(level)
+            print(f"Resolva: {expression} = ?")
+            
+            stop_event = threading.Event()
+            timer_thread = threading.Thread(target=countdown, args=(time_limit, stop_event))
+            timer_thread.start()
+            
+            # Limpa a linha do temporizador e prepara para a entrada
+            print()  # Adiciona uma linha em branco para separar a pergunta do temporizador
+            
+            start_time = time.time()
+            user_answer = None
+            while user_answer is None:
+                try:
+                    user_answer = int(input(f"Você tem {time_limit} segundos para responder: "))
+                except ValueError:
+                    print("Entrada inválida. Por favor, insira um número inteiro.")
+            
+            elapsed_time = time.time() - start_time
+            stop_event.set()
+            timer_thread.join()
+            
+            if elapsed_time > time_limit:
+                print("Tempo esgotado!")
+                break
+            
+            correct_answer = calculate_result(expression, left_to_right=True)
+            
+            if user_answer == correct_answer:
+                print("Resposta correta!")
+                level += 1
+            else:
+                print(f"Resposta incorreta. A resposta correta é {correct_answer}.")
+                break
+            
+    while True:
+        math_game()
+        continuar = input('Deseja continuar para outro jogo? (s/n): ').strip().lower()
         if continuar != 's':
             print('Voltando ao menu principal...')
             break
+
+def calculadora():
+        while True:
+            print("Escolha uma operação:")
+            print("1. Adição (+)")
+            print("2. Subtração (-)")
+            print("3. Multiplicação (*)")
+            print("4. Divisão (/)")
+
+            operacao = input("Digite a operação desejada (+, -, *, /): ")
+
+            if operacao in ('+', '-', '*', '/'):
+                try:
+                    num1 = float(input("Digite o primeiro número: "))
+                    num2 = float(input("Digite o segundo número: "))
+
+                    if operacao == '+':
+                        resultado = num1 + num2
+                    elif operacao == '-':
+                        resultado = num1 - num2
+                    elif operacao == '*':
+                        resultado = num1 * num2
+                    elif operacao == '/':
+                        if num2 != 0:
+                            resultado = num1 / num2
+                        else:
+                            print("Erro: Divisão por zero não é permitida.")
+                            continue  # Volta ao início do loop para tentar novamente
+
+                    print(f"O resultado é: {resultado}")
+
+                except ValueError:
+                    print("Erro: Entrada inválida. Por favor, insira números válidos.")
+            
+            else:
+                print("Erro: Operação inválida.")
+
+            # Pergunta ao usuário se deseja continuar
+            continuar = input('Deseja realizar outra operação? (s/n): ').strip().lower()
+            if continuar != 's':
+                print('Voltando ao menu principal...')
+                break
 
 def tabuada():
     while True:
