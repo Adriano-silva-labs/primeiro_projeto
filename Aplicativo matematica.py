@@ -146,22 +146,24 @@ def raciocinio_rapido():
         for i in range(seconds, 0, -1):
             if stop_event.is_set():
                 break
-            print(f"\rTempo restante: {i} segundos", end="")
+            print(f"\rTempo restante: {i} segundos", end="", flush= True)
             time.sleep(1)
         if not stop_event.is_set():
-            print("\nTempo esgotado!")
+            print("\rTempo esgotado!         ")
+        else:
+            print("\r" + "" * 30, end="")
 
     def math_game():
         level = 1
         question_count = 0
-        time_limit = 50
+        time_limit = 30
         
         while True:
             question_count += 1
             
             # Ajusta o limite de tempo com base no número de perguntas
             if question_count % 10 == 1 and question_count != 1:
-                time_limit = max(10, 50 - ((question_count // 10 - 1) * 5))
+                time_limit = max(10, 30 - ((question_count // 10 - 1) * 5))
             
             print(f"\nNível {level}")
             expression = generate_expression(level)
@@ -178,7 +180,7 @@ def raciocinio_rapido():
             user_answer = None
             while user_answer is None:
                 try:
-                    user_answer = int(input(f"Você tem {time_limit} segundos para responder: "))
+                    user_answer = int(input(f"Você tem {time_limit} segundos para responder:\n:"))
                 except ValueError:
                     print("Entrada inválida. Por favor, insira um número inteiro.")
             
@@ -187,7 +189,7 @@ def raciocinio_rapido():
             timer_thread.join()
             
             if elapsed_time > time_limit:
-                print("Tempo esgotado!")
+                print("Tempo esgotado!\n GAME OVER")
                 break
             
             correct_answer = calculate_result(expression, left_to_right=True)
